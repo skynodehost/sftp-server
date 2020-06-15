@@ -63,6 +63,10 @@ func (c Configuration) Initalize() error {
 		NoClientAuth: false,
 		MaxAuthTries: 6,
 		PasswordCallback: func(conn ssh.ConnMetadata, pass []byte) (*ssh.Permissions, error) {
+			if !strings.Contains(conn.User(), ".") {
+				return nil, errors.New("could not validate credentials")
+			}
+
 			sp, err := c.validateCredentials(conn.User(), pass)
 			if err != nil {
 				return nil, errors.New("could not validate credentials")
